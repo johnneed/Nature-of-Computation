@@ -48,10 +48,12 @@ def __createPath(edges, path):
     return path if len(remainingEdges) == 0 else __createPath(remainingEdges, path)
 
 
-def __permutations(arr, prefix = []):
+def __permutations(arr, prefix=[]):
+    flatten = lambda l: [item for sublist in l for item in sublist]
     if len(arr) == 0:
         return prefix + arr
-    return [__permutations(arr[:i] + arr[i+1:], prefix + [x]) for i, x in enumerate(arr)]
+    newStuff = [__permutations(arr[:i] + arr[i + 1:], prefix + [x]) for i, x in enumerate(arr)]
+    return newStuff if (len(arr) == 1) else flatten(newStuff)
 
 
 print(str(__permutations([1, 2, 3, 4])))

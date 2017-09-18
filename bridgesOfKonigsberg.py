@@ -23,16 +23,19 @@ def __countEdges(edges):
 def findSolution(edges):
     if not isSolvable(edges):
         return 'no solution'
-    return __startPaths(edges)
+    return __startPaths(__permutations(edges))
 
 
-def __startPaths(edges):
+def __startPaths(edgeSets):
+    if(len(edgeSets) == 0):
+        return []
+    edges = edgeSets[0]
     currentVertex = edges[0][0]
     pathStart = [currentVertex]
     path = __createPath(edges, pathStart)
-    if len(path) == len(edges):
+    if len(path) == len(edges) + 1:
         return path
-    return __startPaths(edges[1:] + [edges[0]])
+    return __startPaths(edgeSets[1:])
 
 
 def __createPath(edges, path):
@@ -56,4 +59,3 @@ def __permutations(arr, prefix=[]):
     return newStuff if (len(arr) == 1) else flatten(newStuff)
 
 
-print(str(__permutations([1, 2, 3, 4])))

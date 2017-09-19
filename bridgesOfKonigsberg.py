@@ -2,55 +2,62 @@
 from functools import reduce
 
 
-def __countDegrees(edge: tuple, vertices: dict) -> dict:
+def __count_degrees(edge: tuple, vertices: dict) -> dict:
     edge1, edge2 = edge
     vertices[edge1] = vertices.get(edge1, 0) + 1
     vertices[edge2] = vertices.get(edge2, 0) + 1
     return vertices
 
 
-def isSolvable(edges: list) -> bool:
-    vertexDegrees = reduce((lambda vertices, edge: __countDegrees(edge, vertices)), edges, {})
-    oddCount = reduce((lambda total, key: total + (0 if vertexDegrees[key] % 2 == 0  else 1)), list(vertexDegrees), 0)
-    return oddCount < 3
+def is_solvable(edges: list) -> bool:
+    vertex_degrees = reduce((lambda vertices, edge: __count_degrees(edge, vertices)), edges, {})
+    odd_count = reduce((lambda total, key: total + (0 if vertex_degrees[key] % 2 == 0 else 1)), list(vertex_degrees), 0)
+    return odd_count < 3
 
-def __countEdges(edges: list) -> int:
+
+def __count_edges(edges: list) -> int:
     count = reduce((lambda total, edge: total + 1), edges, 0)
     return count
 
-def findSolution(edges: list) -> str:
-    if not isSolvable(edges):
-        return 'no solution'
-    return '->'.join(__startPaths(__permutations(edges)))
 
-def __startPaths(edgeSets: list) -> list:
-    if (len(edgeSets) == 0):
+def find_solution(edges: list) -> str:
+    if not is_solvable(edges):
+        return 'no solution'
+    return ' --> '.join(str(x) for x in __start_paths(__permutations(edges)))
+
+
+def __start_paths(edge_sets: list) -> list:
+    if len(edge_sets) == 0:
         return []
-    edges = edgeSets[0]
-    currentVertex = edges[0][0]
-    pathStart = [currentVertex]
-    path = __createPath(edges, pathStart)
+    edges = edge_sets[0]
+    current_vertex = edges[0][0]
+    path_start = [current_vertex]
+    path = __create_path(edges, path_start)
     if len(path) == len(edges) + 1:
         return path
-    return __startPaths(edgeSets[1:])
+    return __start_paths(edge_sets[1:])
 
-def __createPath(edges: list, path: list) -> list:
-    currentVertex = path[-1]
-    possibleExits = list(filter(lambda edge: (edge[0] == currentVertex or edge[1] == currentVertex), edges))
-    if len(possibleExits) == 0:
+
+def __create_path(edges: list, path: list) -> list:
+    current_vertex = path[-1]
+    possible_exits = list(filter(lambda edge: (edge[0] == current_vertex or edge[1] == current_vertex), edges))
+    if len(possible_exits) == 0:
         return path
-    exit = possibleExits[0]
-    nextVertex = exit[0] if (exit[0] != currentVertex) else exit[1]
-    path = path + [nextVertex]
-    index = edges.index(exit)
-    remainingEdges = edges[0:index] + edges[index + 1:]
-    return path if len(remainingEdges) == 0 else __createPath(remainingEdges, path)
+    my_exit = possible_exits[0]
+    next_vertex = my_exit[0] if (my_exit[0] != current_vertex) else my_exit[1]
+    path = path + [next_vertex]
+    index = edges.index(my_exit)
+    remaining_edges = edges[0:index] + edges[index + 1:]
+    return path if len(remaining_edges) == 0 else __create_path(remaining_edges, path)
+
 
 def __permutations(arr: list, prefix: list = None) -> list:
+    def flatten(l): return [item for sublist in l for item in sublist]
     if prefix is None:
         prefix = []
-    flatten = lambda l: [item for sublist in l for item in sublist]
+
     if len(arr) == 0:
         return prefix + arr
-    newStuff = [__permutations(arr[:i] + arr[i + 1:], prefix + [x]) for i, x in enumerate(arr)]
-    return newStuff if (len(arr) == 1) else flatten(newStuff)
+
+    new_stuff = [__permutations(arr[:i] + arr[i + 1:], prefix + [x]) for i, x in enumerate(arr)]
+    return new_stuff if (len(arr) == 1) else flatten(new_stuff)

@@ -55,5 +55,5 @@ def find_hamiltonian_cycles(nodes:dict, start_node: str) -> list:
 def format_hamiltonian_path(paths: list) -> str:
      formatted_path = ''
      for path in paths :
-         formatted_path += (' --> '.join(str(x) for x in path) + "\n")
+         formatted_path = formatted_path + (' --> '.join(str(x) for x in path)) + '/n'
      return formatted_path

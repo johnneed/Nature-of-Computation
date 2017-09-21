@@ -1,6 +1,7 @@
 ## Hamilton's Icosian Game
 from functools import reduce
 from copy import deepcopy
+import os
 
 # Graph of the game board.
 nodes = {
@@ -27,7 +28,7 @@ nodes = {
 }
 
 
-def find_all_paths(nodes: dict, start_node: str) -> list:
+def __find_all_paths(nodes: dict, start_node: str) -> list:
     pathCount = reduce(lambda sum, value: len(value[1]) + sum, nodes.items(), 0)
     remaining_board =  deepcopy(nodes)
     exits = remaining_board.pop(start_node, None)
@@ -35,13 +36,13 @@ def find_all_paths(nodes: dict, start_node: str) -> list:
         return [[start_node]]
     for key in remaining_board:
         remaining_board[key] = list(filter(lambda x : x != start_node, remaining_board[key]))
-    sub_paths =  list(reduce(lambda s_paths, exit: s_paths + find_all_paths(remaining_board, exit), exits, []))
+    sub_paths =  list(reduce(lambda s_paths, exit: s_paths + __find_all_paths(remaining_board, exit), exits, []))
     paths = list(map(lambda p:[start_node]  + p, sub_paths))
     return paths
 
 def find_hamiltonian_paths(nodes: dict, start_node: str) -> list:
     nodeCount = len(nodes)
-    all_paths = find_all_paths(nodes, start_node)
+    all_paths = __find_all_paths(nodes, start_node)
     hamiltonian_paths = list(filter(lambda p: len(p) == nodeCount, all_paths))
     return hamiltonian_paths
 
@@ -51,6 +52,8 @@ def find_hamiltonian_cycles(nodes:dict, start_node: str) -> list:
     hamiltonian_cycles = list(filter(lambda p: p[-1] in endNodes, hamiltonian_paths))
     return hamiltonian_cycles
 
-
-
-print(find_hamiltonian_cycles(nodes, 'A'))
+def format_hamiltonian_path(paths: list) -> str:
+     formatted_path = ''
+     for path in paths :
+         formatted_path += (' --> '.join(str(x) for x in path) + "\n")
+     return formatted_path
